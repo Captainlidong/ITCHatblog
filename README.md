@@ -89,14 +89,34 @@ my_ITCHatblog
 - MySQL 5.7 / 8.0
 - Node.js 14+
 
-### 1. 克隆项目
+### 方式一：Windows 一键启动（推荐）
+
+项目根目录提供了一套双击即用的批处理脚本（前端已构建并嵌入后端，单端口 **9090** 同时提供页面和接口）：
+
+| 脚本 | 作用 |
+|---|---|
+| `start-backend.bat` | 启动后端服务（自动检测端口占用、启动后最小化窗口并打开浏览器） |
+| `stop-backend.bat` | 停止后端服务 |
+| `打开系统.bat` | 在浏览器中打开系统首页 |
+| `build-all.bat` | 前端 `npm install + build` → 产物复制进后端 `static/` → Maven 打包 jar |
+| `open-in-idea.bat` | 用 IntelliJ IDEA 打开本工程 |
+
+日常使用：**双击 `start-backend.bat`**，浏览器自动打开 http://localhost:9090 即可。修改代码后需重新构建时，双击 `build-all.bat`。
+
+> 说明：
+> - `start-backend.bat` 默认调用 PATH 中的 `java`；若 java 不在 PATH，可新建 `start-backend.local.bat`（已被 gitignore）写入 `set "JAVA=你的java.exe完整路径"`。
+> - 数据库密码等本机配置放在 `springboot/application-local.yml`（已被 gitignore，不会提交），启动脚本会自动加载；也可以直接改 `application.yml`。
+
+### 方式二：前后端分离开发模式
+
+#### 1. 克隆项目
 
 ```bash
-git clone https://github.com/Captainlidong/my_ITCHhatblog.git
-cd my_ITCHhatblog
+git clone https://github.com/Captainlidong/my_ITCHatblog.git
+cd my_ITCHatblog
 ```
 
-### 2. 配置数据库
+#### 2. 配置数据库
 
 1. 在本地 MySQL 中创建数据库 `xm-blog`（字符集 `utf-8`）
 2. 修改 `springboot/src/main/resources/application.yml` 中的数据库连接信息：
@@ -121,7 +141,7 @@ mysql -uroot -p xm-blog < xm-blog.sql
 > INSERT INTO `admin` (`username`, `password`, `name`, `role`) VALUES ('admin', 'admin', '管理员', 'ADMIN');
 > ```
 
-### 3. 启动后端
+#### 3. 启动后端
 
 ```bash
 cd springboot
@@ -130,7 +150,7 @@ mvn spring-boot:run
 
 或在 IDEA 中直接运行 `SpringbootApplication` 主类，默认端口 **9090**。
 
-### 4. 启动前端
+#### 4. 启动前端
 
 ```bash
 cd vue

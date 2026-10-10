@@ -16,7 +16,12 @@ npm-debug.log*
 # 环境与密钥（按需保留，避免泄露密码）
 **/application-dev.yml
 **/application-prod.yml
+**/application-local.yml
 *.env
+start-backend.local.bat
+
+# 前端打包产物嵌入后端（由 build-all.bat 生成，不入库）
+springboot/src/main/resources/static/
 
 # 系统文件
 .DS_Store

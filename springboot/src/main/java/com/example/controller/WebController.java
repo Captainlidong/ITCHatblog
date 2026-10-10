@@ -2,15 +2,21 @@ package com.example.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.example.common.Result;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.common.enums.RoleEnum;
 import com.example.entity.Account;
 import com.example.service.AdminService;
 import com.example.service.UserService;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 基础前端接口
@@ -24,9 +30,17 @@ public class WebController {
     @Resource
     private UserService userService;
 
+    /**
+     * 前端打包产物嵌入后端（classpath:/static/index.html 存在）时，根路径转发到前端首页；纯后端模式保持原样返回 JSON
+     */
     @GetMapping("/")
-    public Result hello() {
-        return Result.success("访问成功");
+    public void hello(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (new ClassPathResource("static/index.html").exists()) {
+            request.getRequestDispatcher("/index.html").forward(request, response);
+            return;
+        }
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSONUtil.toJsonStr(Result.success("访问成功")));
     }
 
     /**

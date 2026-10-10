@@ -37,6 +37,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // 浏览器页面导航（直接访问或刷新前端路由）不拦截，数据仍由带 token 的接口请求鉴权
+        String accept = request.getHeader("Accept");
+        if (accept != null && accept.contains("text/html")) {
+            return true;
+        }
         // 1. 从http请求的header中获取token
         String token = request.getHeader(Constants.TOKEN);
         if (ObjectUtil.isEmpty(token)) {

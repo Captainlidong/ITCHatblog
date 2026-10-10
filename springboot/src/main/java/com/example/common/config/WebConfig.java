@@ -2,9 +2,12 @@ package com.example.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 @Configuration
 public class WebConfig implements  WebMvcConfigurer {
@@ -19,6 +22,33 @@ public class WebConfig implements  WebMvcConfigurer {
                 .excludePathPatterns("/")
                 .excludePathPatterns("/login")
                 .excludePathPatterns("/register")
-                .excludePathPatterns("/files/**");
+                .excludePathPatterns("/files/**")
+                // 前端打包产物嵌入后端时放行静态资源（接口路径与这些前缀不冲突）
+                .excludePathPatterns("/index.html")
+                .excludePathPatterns("/favicon.ico")
+                .excludePathPatterns("/js/**")
+                .excludePathPatterns("/css/**")
+                .excludePathPatterns("/img/**")
+                .excludePathPatterns("/fonts/**")
+                .excludePathPatterns("/media/**");
+    }
+
+    // 前端打包产物放在 classpath:/static/ 时，history 路由刷新后回退到 index.html
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver() {
+                    @Override
+                    protected org.springframework.core.io.Resource getResource(String resourcePath, org.springframework.core.io.Resource location) throws IOException {
+                        org.springframework.core.io.Resource requested = location.createRelative(resourcePath);
+                        if (requested.exists() && requested.isReadable()) {
+                            return requested;
+                        }
+                        org.springframework.core.io.Resource index = location.createRelative("index.html");
+                        return index.exists() && index.isReadable() ? index : null;
+                    }
+                });
     }
 }
