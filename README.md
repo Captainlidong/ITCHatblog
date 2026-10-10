@@ -10,6 +10,24 @@
 
 一个基于 **Spring Boot + Vue** 前后端分离的 IT 技术交流博客论坛系统，支持博客发表与浏览、评论、点赞、收藏、活动报名、公告管理，并实现了**基于用户行为的协同过滤推荐**功能。
 
+## 🖼 系统预览
+
+### 前台（用户端）
+
+| 首页 | 博客详情 |
+|:---:|:---:|
+| ![前台首页](docs/screenshots/front-home.png) | ![博客详情](docs/screenshots/front-blog-detail.png) |
+| **IT博客推荐（基于用户行为的协同过滤）** | **活动中心** |
+| ![IT博客推荐](docs/screenshots/front-recommend.png) | ![活动中心](docs/screenshots/front-activity.png) |
+| **个人中心** | **登录** |
+| ![个人中心](docs/screenshots/front-person.png) | ![登录页](docs/screenshots/front-login.png) |
+
+### 后台（管理端）
+
+| 后台管理系统 |
+|:---:|
+| ![后台管理](docs/screenshots/manager-home.png) |
+
 ## ✨ 功能特性
 
 ### 前台（用户端）
