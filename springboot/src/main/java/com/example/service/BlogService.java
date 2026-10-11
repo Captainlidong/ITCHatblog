@@ -156,15 +156,12 @@ public class BlogService {
     }
 
     /**
-     * 博客榜单
+     * 博客榜单：按综合热度分（阅读量 + 点赞×5 + 收藏×10 + 评论×3）降序取前 20，
+     * 与首页综合排序同口径，高互动的新文章也能上榜
      * @return
      */
     public List<Blog> selectTop() {
-        List<Blog> blogList = this.selectAll(null);
-        blogList= blogList.stream().sorted((b1, b2) -> b2.getReadCount().compareTo(b1.getReadCount()))
-                .limit(20)
-                .collect(Collectors.toList());
-        return blogList;
+        return blogMapper.selectHot();
     }
 
     /**

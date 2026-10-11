@@ -135,6 +135,24 @@
         update blog set top = #{top} where id = #{id}
     </update>
 
+    <!--热榜：按综合热度分（阅读量 + 点赞×5 + 收藏×10 + 评论×3）取前20，与首页综合排序同口径-->
+    <select id="selectHot" resultType="com.example.entity.Blog">
+        select blog.* ,
+        category.name as categoryName,
+        user.name as userName
+        from blog
+        left join category
+        on blog.category_id = category.id
+        left join user
+        on blog.user_id = user.id
+        order by ( blog.read_count
+        + (select count(*) from likes where likes.fid = blog.id and likes.module = '博客') * 5
+        + (select count(*) from collect where collect.fid = blog.id and collect.module = '博客') * 10
+        + (select count(*) from `comment` where `comment`.fid = blog.id and `comment`.module = '博客') * 3
+        ) desc
+        limit 20
+    </select>
+
     <!--分页查询 用户点赞的博客-->
     <select id="selectUserLike" resultType="com.example.entity.Blog">
         select blog.* , user.name as userName

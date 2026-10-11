@@ -48,6 +48,11 @@ public interface BlogMapper {
     List<Blog> selectUserBlog(Integer userId);
 
     /**
+     * 热榜：按综合热度分（阅读量 + 点赞×5 + 收藏×10 + 评论×3）降序取前 20
+     */
+    List<Blog> selectHot();
+
+    /**
      * 置顶/取消置顶
      * @param id   博客ID
      * @param top  1置顶 0取消
