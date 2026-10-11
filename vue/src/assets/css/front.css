@@ -62,6 +62,18 @@ body{
     border: none !important;
     height: 59px;
 }
+/* 顶部导航：任何视口宽度、系统缩放下都强制保持横向一行，杜绝换行堆叠 */
+.front-header-center .el-menu--horizontal {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    min-width: 100%;
+}
+.front-header-center .el-menu--horizontal > .el-menu-item {
+    float: none;
+    display: block;
+    white-space: nowrap;
+}
 .el-menu{
     background-color: #0066BC;
 }
