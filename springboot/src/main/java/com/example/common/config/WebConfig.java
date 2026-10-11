@@ -30,7 +30,24 @@ public class WebConfig implements  WebMvcConfigurer {
                 .excludePathPatterns("/css/**")
                 .excludePathPatterns("/img/**")
                 .excludePathPatterns("/fonts/**")
-                .excludePathPatterns("/media/**");
+                .excludePathPatterns("/media/**")
+                // 游客可浏览的只读接口（点赞/收藏/评论/发布等写操作仍需登录）
+                .excludePathPatterns("/blog/selectPage")
+                .excludePathPatterns("/blog/selectById/**")
+                .excludePathPatterns("/blog/selectRecommend/**")
+                .excludePathPatterns("/blog/selectTop")
+                .excludePathPatterns("/blog/updateReadCount/**")
+                .excludePathPatterns("/category/selectAll")
+                .excludePathPatterns("/activity/selectPage")
+                .excludePathPatterns("/activity/selectAll")
+                .excludePathPatterns("/activity/selectById/**")
+                .excludePathPatterns("/activity/selectTop")
+                .excludePathPatterns("/activity/updateReadCount/**")
+                .excludePathPatterns("/notice/selectAll")
+                .excludePathPatterns("/notice/selectPage")
+                .excludePathPatterns("/notice/selectById/**")
+                .excludePathPatterns("/comment/selectForUser")
+                .excludePathPatterns("/comment/selectCount");
     }
 
     // 前端打包产物放在 classpath:/static/ 时，history 路由刷新后回退到 index.html

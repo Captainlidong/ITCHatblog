@@ -94,7 +94,17 @@ export default {
     handleShowReplyInput(item){
       this.$set(item,'showReplyInput',!item.showReplyInput)
     },
+    checkLogin(){   // 游客写操作前置检查
+      const user = JSON.parse(localStorage.getItem('xm-user') || '{}')
+      if (!user.id) {
+        this.$message.warning('该操作需要登录，请先登录或注册')
+        this.$router.push('/login')
+        return false
+      }
+      return true
+    },
     addReply(item){
+      if (!this.checkLogin()) return
       this.$request.post('/comment/add',{pid: item.id,rootId: item.rootId, content: item.replyContent, fid: this.fid,module:this.module}).then(res=>{
         if (res.code==='200'){
           this.$message.success('回复成功！')
@@ -116,6 +126,7 @@ export default {
       })
     },
     addComment(){
+      if (!this.checkLogin()) return
       this.$request.post('/comment/add',{content:this.commentContent,fid:this.fid,module:this.module}).then(res=>{
         if (res.code==='200'){
           this.$message.success('评论成功！')

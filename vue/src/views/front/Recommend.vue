@@ -6,8 +6,16 @@
       <el-spinner></el-spinner>
     </div>
 
+    <!-- 游客引导 -->
+    <div v-if="guest" style="text-align: center; padding: 90px 20px;">
+      <i class="el-icon-user-solid" style="font-size: 52px; color: #409EFF"></i>
+      <p style="font-size: 16px; color: #666666; margin: 18px 0 26px">登录后可根据你的浏览、点赞和收藏，生成专属个性化推荐</p>
+      <el-button type="primary" @click="$router.push('/login')">去登录</el-button>
+      <el-button @click="$router.push('/register')">去注册</el-button>
+    </div>
+
     <!-- 博客列表 -->
-    <div v-for="item in tableData" :key="item.id" class="blog-box" v-show="!loading">
+    <div v-for="item in tableData" :key="item.id" class="blog-box" v-show="!loading && !guest">
       <div style="flex: 1;width: 0">
         <!-- 标题 -->
         <a :href="'/front/blogDetail?blogId=' + item.id" target="_blank">
@@ -47,7 +55,7 @@
     </div>
 
     <!-- 暂无数据 -->
-    <div v-if="total === 0 && !loading" style="padding: 20px; text-align: center; font-size: 16px; color: #666666">
+    <div v-if="total === 0 && !loading && !guest" style="padding: 20px; text-align: center; font-size: 16px; color: #666666">
       暂无推荐内容。
     </div>
 
@@ -77,7 +85,8 @@ export default {
       pageSize: 10,
       total: 0,
       loading: false,
-      userId: null
+      userId: null,
+      guest: false
     };
   },
   created() {
@@ -88,8 +97,7 @@ export default {
     loadUserIdFromToken() {
       const user = localStorage.getItem("xm-user"); // 登录后存储的用户对象
       if (!user) {
-        this.$message.error("请先登录");
-        this.$router.push("/login");
+        this.guest = true;   // 游客：展示引导卡片，不再强制跳登录
         return;
       }
 
@@ -104,8 +112,7 @@ export default {
         this.loadRecommendations(this.pageNum);
       } catch (e) {
         console.error("token解析失败", e);
-        this.$message.error("登录状态异常，请重新登录");
-        this.$router.push("/login");
+        this.guest = true;   // 登录态异常也按游客引导处理
       }
     },
     // 添加 parseJwt 方法

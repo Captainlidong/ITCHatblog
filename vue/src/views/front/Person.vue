@@ -98,7 +98,11 @@ export default {
     }
   },
   created() {
-
+    const user = JSON.parse(localStorage.getItem('xm-user') || '{}')
+    if (!user.id) {   // 游客不能进入个人中心
+      this.$message.warning('该操作需要登录，请先登录或注册')
+      this.$router.push('/login')
+    }
   },
   methods: {
     updateUser(){

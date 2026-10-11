@@ -78,9 +78,9 @@ export default {
     }
   },
   created() {
-    /*非管理员不能到后台*/
+    /*非管理员引导到前台首页（游客也可以浏览前台）*/
     if (!this.user.id||this.user.role!=='ADMIN') {
-      this.$router.push('/login')
+      this.$router.push('/front/home')
     }
   },
   methods: {

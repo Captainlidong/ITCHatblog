@@ -64,6 +64,11 @@ export default {
     }
   },
   mounted() {
+    if (!this.user || !this.user.id) {   // 游客不能发表博客
+      this.$message.warning('该操作需要登录，请先登录或注册')
+      this.$router.push('/login')
+      return
+    }
     this.$request.get('/category/selectAll').then(res=>{
       this.categoryList=res.data || []
     })
@@ -81,6 +86,11 @@ export default {
   },
   methods:{
     save(){   // 保存按钮触发的逻辑  它会触发新增或者更新
+      if (!this.user || !this.user.id) {   // 游客写操作前置检查
+        this.$message.warning('该操作需要登录，请先登录或注册')
+        this.$router.push('/login')
+        return
+      }
       this.$refs.formRef.validate((valid) => {
         if (valid) {
           this.form.tags=JSON.stringify(this.tagsArr)//把json数组转化成json子字符串存到数据库
