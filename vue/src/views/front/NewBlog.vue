@@ -44,12 +44,15 @@
       <div style="text-align: center"><el-button type="primary" style="width: 100px" @click="save">发 表</el-button></div>
     </div>
 
-    <!-- 游客引导 -->
+    <!-- 游客/管理员引导 -->
     <div v-if="guest" class="card" style="text-align: center; padding: 90px 20px;">
-      <i class="el-icon-edit-outline" style="font-size: 52px; color: #409EFF"></i>
-      <p style="font-size: 16px; color: #666666; margin: 18px 0 26px">登录后就可以发表你的博客啦</p>
-      <el-button type="primary" @click="$router.push('/login')">去登录</el-button>
-      <el-button @click="$router.push('/register')">去注册</el-button>
+      <i :class="adminMode ? 'el-icon-s-tools' : 'el-icon-edit-outline'" style="font-size: 52px; color: #409EFF"></i>
+      <p style="font-size: 16px; color: #666666; margin: 18px 0 26px">
+        {{ adminMode ? '发表博客请使用用户账号登录，管理员请在后台管理系统内容' : '登录后就可以发表你的博客啦' }}
+      </p>
+      <el-button v-if="adminMode" type="primary" @click="$router.push('/home')">去后台管理</el-button>
+      <el-button v-else type="primary" @click="$router.push('/login')">去登录</el-button>
+      <el-button v-if="!adminMode" @click="$router.push('/register')">去注册</el-button>
     </div>
   </div>
 </template>
@@ -69,12 +72,18 @@ export default {
       categoryList:[],
       editor:null,
       blogId:this.$route.query.blogId,
-      guest: false
+      guest: false,
+      adminMode: false
     }
   },
   mounted() {
     if (!this.user || !this.user.id) {   // 游客：展示引导卡片而不是强制跳登录
       this.guest = true
+      return
+    }
+    if (this.user.role !== 'USER') {   // 管理员：引导使用用户账号
+      this.guest = true
+      this.adminMode = true
       return
     }
     this.$request.get('/category/selectAll').then(res=>{
@@ -94,9 +103,8 @@ export default {
   },
   methods:{
     save(){   // 保存按钮触发的逻辑  它会触发新增或者更新
-      if (!this.user || !this.user.id) {   // 游客写操作前置检查
-        this.$message.warning('该操作需要登录，请先登录或注册')
-        this.$router.push('/login')
+      if (!this.user || !this.user.id || this.user.role !== 'USER') {   // 仅用户账号可发表
+        this.$message.warning('请使用用户账号发表博客')
         return
       }
       this.$refs.formRef.validate((valid) => {

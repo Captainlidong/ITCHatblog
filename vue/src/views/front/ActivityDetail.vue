@@ -71,16 +71,20 @@ export default {
     this.$request.put('/activity/updateReadCount/' + this.activityId)
   },
   methods: {
-    checkLogin(){   // 游客写操作前置检查
+    checkUser(){   // 写操作前置检查：需用户身份（游客引导登录，管理员引导使用后台）
       if (!this.user || !this.user.id) {
         this.$message.warning('该操作需要登录，请先登录或注册')
         this.$router.push('/login')
         return false
       }
+      if (this.user.role !== 'USER') {
+        this.$message.warning('管理员请使用用户账号进行该操作')
+        return false
+      }
       return true
     },
     cancel() {   // 活动取消报名
-      if (!this.checkLogin()) return
+      if (!this.checkUser()) return
       this.$confirm('您确定取消报名吗？', '确认取消', {type: "warning"}).then(response => {
         this.$request.delete('/activitySign/delete/user/' + this.activityId+'/'+this.user.id).then(res => {
           if (res.code === '200') {   // 表示操作成功
@@ -94,7 +98,7 @@ export default {
       })
     },
     collect() {
-      if (!this.checkLogin()) return
+      if (!this.checkUser()) return
       this.$request.post('/collect/set', { fid: this.activityId, module: '活动' }).then(res => {
         if (res.code === '200') {
           this.$message.success('操作成功')
@@ -105,7 +109,7 @@ export default {
       })
     },
     like() {
-      if (!this.checkLogin()) return
+      if (!this.checkUser()) return
       this.$request.post('/likes/set', { fid: this.activityId, module: '活动' }).then(res => {
         if (res.code === '200') {
           this.$message.success('操作成功')
@@ -116,7 +120,7 @@ export default {
       })
     },
     sign() {
-      if (!this.checkLogin()) return
+      if (!this.checkUser()) return
       this.$request.post('/activitySign/add', { activityId: this.activityId }).then(res => {
         if (res.code === '200') {
           this.$message.success('报名成功')

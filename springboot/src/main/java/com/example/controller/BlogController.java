@@ -29,10 +29,14 @@ public class BlogController {
     private UserBehaviorService userBehaviorService;
 
     /**
-     * 新增
+     * 新增（仅用户角色，避免管理员身份产生无作者的博客数据）
      */
     @PostMapping("/add")
     public Result add(@RequestBody Blog blog){
+        Account currentUser = TokenUtils.getCurrentUser();
+        if (!RoleEnum.USER.name().equals(currentUser.getRole())) {
+            return Result.error("403", "请使用用户账号发表博客");
+        }
         blogService.add(blog);
         return Result.success();
     }

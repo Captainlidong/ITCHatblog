@@ -88,21 +88,23 @@ public class BlogService {
     public Blog selectById(Integer id) {
         Blog blog = blogMapper.selectById(id);
         User user = userService.selectById(blog.getUserId());
-        List<Blog> userBlogList = blogMapper.selectUserBlog(user.getId());
-        user.setBlogCount(userBlogList.size());  // 当前用户浏览的作者博客数量
-        //  当前用户收到的点赞和收藏的数据
-        int userLikesCount = 0;
-        int userCollectCount = 0;
-        for (Blog b : userBlogList) { // 遍历用户博客列表
-            Integer fid = b.getId();
-            int likesCount = likesService.selectByFidAndModule(fid, LikesModuleEnum.BLOG.getValue());
-            userLikesCount += likesCount;
+        if (user != null) {   // 防御：作者不存在（历史无主数据）时跳过作者统计，避免详情页 500
+            List<Blog> userBlogList = blogMapper.selectUserBlog(user.getId());
+            user.setBlogCount(userBlogList.size());  // 当前用户浏览的作者博客数量
+            //  当前用户收到的点赞和收藏的数据
+            int userLikesCount = 0;
+            int userCollectCount = 0;
+            for (Blog b : userBlogList) { // 遍历用户博客列表
+                Integer fid = b.getId();
+                int likesCount = likesService.selectByFidAndModule(fid, LikesModuleEnum.BLOG.getValue());
+                userLikesCount += likesCount;
 
-            int collectCount = collectService.selectByFidAndModule(fid, LikesModuleEnum.BLOG.getValue());
-            userCollectCount += collectCount;  // 用户收到的累加收藏数量
+                int collectCount = collectService.selectByFidAndModule(fid, LikesModuleEnum.BLOG.getValue());
+                userCollectCount += collectCount;  // 用户收到的累加收藏数量
+            }
+            user.setLikesCount(userLikesCount);
+            user.setCollectCount(userCollectCount);
         }
-        user.setLikesCount(userLikesCount);
-        user.setCollectCount(userCollectCount);
 
 
         blog.setUser(user);  // 设置作者信息

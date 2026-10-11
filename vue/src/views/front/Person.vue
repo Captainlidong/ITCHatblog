@@ -48,12 +48,15 @@
       </el-tab-pane>
     </el-tabs>
 
-    <!-- 游客引导 -->
+    <!-- 游客/管理员引导 -->
     <div v-if="guest" class="card" style="text-align: center; padding: 90px 20px;">
       <i class="el-icon-user-solid" style="font-size: 52px; color: #409EFF"></i>
-      <p style="font-size: 16px; color: #666666; margin: 18px 0 26px">登录后可管理你的博客、点赞、收藏和活动报名</p>
-      <el-button type="primary" @click="$router.push('/login')">去登录</el-button>
-      <el-button @click="$router.push('/register')">去注册</el-button>
+      <p style="font-size: 16px; color: #666666; margin: 18px 0 26px">
+        {{ isAdmin ? '个人中心仅供用户账号使用，请在后台管理系统内容' : '登录后可管理你的博客、点赞、收藏和活动报名' }}
+      </p>
+      <el-button v-if="isAdmin" type="primary" @click="$router.push('/home')">去后台管理</el-button>
+      <el-button v-else type="primary" @click="$router.push('/login')">去登录</el-button>
+      <el-button v-if="!isAdmin" @click="$router.push('/register')">去注册</el-button>
     </div>
 
   <Footer/>
@@ -103,13 +106,17 @@ export default {
       likeCurrent:'博客',
       collectCurrent:'博客',
       commentCurrent:'博客',
-      guest: false
+      guest: false,
+      isAdmin: false
     }
   },
   created() {
     const user = JSON.parse(localStorage.getItem('xm-user') || '{}')
     if (!user.id) {   // 游客：展示引导卡片而不是强制跳登录
       this.guest = true
+    } else if (user.role !== 'USER') {   // 管理员：个人中心仅供用户账号使用
+      this.guest = true
+      this.isAdmin = true
     }
   },
   methods: {

@@ -1,8 +1,11 @@
 package com.example.controller;
 
 import com.example.common.Result;
+import com.example.common.enums.RoleEnum;
+import com.example.entity.Account;
 import com.example.entity.Comment;
 import com.example.service.CommentService;
+import com.example.utils.TokenUtils;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +24,16 @@ public class CommentController {
     private CommentService commentService;
 
     /**
-     * 添加评论
+     * 添加评论（仅用户角色，避免管理员身份产生无主的评论数据）
      * @param comment
      * @return
      */
     @PostMapping("/add")
     public Result add(@RequestBody Comment comment){
+        Account currentUser = TokenUtils.getCurrentUser();
+        if (!RoleEnum.USER.name().equals(currentUser.getRole())) {
+            return Result.error("403", "请使用用户账号进行评论");
+        }
         commentService.add(comment);
         return Result.success();
     }

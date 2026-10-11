@@ -171,16 +171,20 @@ export default {
     this.$request.put('blog/updateReadCount/'+this.blogId)
   },
   methods: {
-    checkLogin(){   // 游客写操作前置检查
+    checkUser(){   // 写操作前置检查：需用户身份（游客引导登录，管理员引导使用后台）
       if (!this.user || !this.user.id) {
         this.$message.warning('该操作需要登录，请先登录或注册')
         this.$router.push('/login')
         return false
       }
+      if (this.user.role !== 'USER') {
+        this.$message.warning('管理员请使用用户账号进行该操作')
+        return false
+      }
       return true
     },
     setLikes(){
-      if (!this.checkLogin()) return
+      if (!this.checkUser()) return
       this.$request.post('/likes/set',{fid:this.blogId,module:'博客'}).then(res => {
         if (res.code==='200'){
           this.$message.success('操作成功！')
@@ -190,7 +194,7 @@ export default {
     })
     },
     setCollect(){
-      if (!this.checkLogin()) return
+      if (!this.checkUser()) return
       this.$request.post('/collect/set',{fid:this.blogId,module:'博客'}).then(res => {
         if (res.code==='200'){
           this.$message.success('操作成功！')
