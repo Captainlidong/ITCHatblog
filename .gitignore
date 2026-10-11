@@ -26,3 +26,7 @@ springboot/src/main/resources/static/
 # 系统文件
 .DS_Store
 Thumbs.db
+
+# 演示数据生成产物（可由 scripts/seed 重新生成）
+scripts/seed/xm-blog-seed.sql
+scripts/seed/gen.log
