@@ -47,7 +47,9 @@ public class WebConfig implements  WebMvcConfigurer {
                 .excludePathPatterns("/notice/selectPage")
                 .excludePathPatterns("/notice/selectById/**")
                 .excludePathPatterns("/comment/selectForUser")
-                .excludePathPatterns("/comment/selectCount");
+                .excludePathPatterns("/comment/selectCount")
+                // 错误页转发路径放行，否则错误处理时会被拦截器二次拦截导致原始错误页崩溃
+                .excludePathPatterns("/error");
     }
 
     // 前端打包产物放在 classpath:/static/ 时，history 路由刷新后回退到 index.html

@@ -1,5 +1,10 @@
 <template>
   <div>
+    <!-- 萌系漂浮贴纸装饰（纯装饰，不阻挡任何操作） -->
+    <div class="bg-decor">
+      <span class="d1">☁️</span><span class="d2">💕</span><span class="d3">🪐</span><span class="d4">⭐</span>
+      <span class="d5">🌸</span><span class="d6">✨</span><span class="d7">🎀</span><span class="d8">🫧</span>
+    </div>
     <div class="front-notice"><i class="el-icon-bell" style="margin-right: 2px"></i>公告：{{ top }}</div>
     <!--头部-->
     <div class="front-header">

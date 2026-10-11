@@ -44,6 +44,30 @@ public class WebController {
     }
 
     /**
+     * 登录/注册页路由（GET）：前端嵌入后端时转发到前端页面，
+     * 否则浏览器直接访问 /login、/register 会因只存在 POST 接口映射而返回 405
+     */
+    @GetMapping("/login")
+    public void loginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (new ClassPathResource("static/index.html").exists()) {
+            request.getRequestDispatcher("/index.html").forward(request, response);
+            return;
+        }
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSONUtil.toJsonStr(Result.success("login")));
+    }
+
+    @GetMapping("/register")
+    public void registerPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (new ClassPathResource("static/index.html").exists()) {
+            request.getRequestDispatcher("/index.html").forward(request, response);
+            return;
+        }
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().write(JSONUtil.toJsonStr(Result.success("register")));
+    }
+
+    /**
      * 登录
      */
     @PostMapping("/login")

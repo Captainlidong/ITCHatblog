@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <div style="width: 380px; padding:50px 30px; background-color: rgba(255,255,255,.5); border-radius: 5px;">
-      <div style="text-align: center; font-size: 24px; margin-bottom: 30px; color: #333">欢迎注册IT论坛博客账号</div>
+    <div class="login-card" style="width: 380px; padding:50px 30px;">
+      <div style="text-align: center; font-size: 24px; margin-bottom: 30px; color: #6b5b95">欢迎注册IT论坛博客账号</div>
       <el-form :model="form" :rules="rules" ref="formRef">
         <el-form-item prop="username">
           <el-input prefix-icon="el-icon-user" size="medium" placeholder="请输入账号" v-model="form.username"></el-input>
@@ -82,14 +82,31 @@ export default {
 .container {
   height: 100vh;
   overflow: hidden;
-  background-image: url("@/assets/imgs/beautiful.jpg");
-  background-size: 100%;
+  background: linear-gradient(160deg, #c9b8f9 0%, #e3c7f7 22%, #ffd7ee 48%, #ffeaf5 66%, #c8f3e2 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #666;
 }
+.login-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 22px;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 14px 40px rgba(160, 120, 220, 0.25);
+}
+.login-card :deep(.el-button--medium) {
+  background: linear-gradient(135deg, #b79cff, #ff9ecf) !important;
+  border: none !important;
+  border-radius: 999px !important;
+  font-weight: bold;
+  box-shadow: 0 6px 16px rgba(255, 158, 207, 0.45);
+}
+.login-card :deep(.el-input__inner) {
+  border-radius: 999px !important;
+}
 a {
-  color: #2a60c9;
+  color: #e8619c;
 }
 </style>

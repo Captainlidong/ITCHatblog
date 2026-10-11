@@ -141,19 +141,5 @@ export default {
 }
 </script>
 <style>
-.category-item {
-  text-align: center;
-  padding: 10px 0;
-  front-size: 16px;
-  cursor: pointer;
-}
-
-.category-item-active {
-  background-color: #1890ff;
-  color: #ffffff;
-  border-radius: 5px;
-}
-
-
-
+/* 分类胶囊样式已统一移至 front.css（.main-body .category-item） */
 </style>
