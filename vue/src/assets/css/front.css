@@ -7,6 +7,7 @@
 
 /* ---------- 全局画布：梦幻渐变 ---------- */
 body {
+    min-width: 1240px;   /* 头部元素较宽，窄窗口下出横向滚动而不是挤压换行 */
     background: linear-gradient(160deg, #c9b8f9 0%, #e3c7f7 22%, #ffd7ee 48%, #ffeaf5 66%, #c8f3e2 100%) fixed;
 }
 
@@ -40,10 +41,11 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.55);
 }
 .front-header-left {
-    width: 300px;
+    width: 260px;
     display: flex;
     align-items: center;
     padding-left: 30px;
+    flex-shrink: 0;
 }
 .front-header-left img, .front-header-dropdown img {
     width: 40px;
@@ -64,9 +66,16 @@ body {
     flex: 1;
 }
 .front-header-right {
-    width: 210px;
+    width: 190px;
     padding-right: 20px;
     text-align: right;
+    flex-shrink: 0;
+}
+/* 搜索区（输入框+按钮）：禁止被压缩换行 */
+.front-header-search {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
 }
 .front-header-dropdown {
     display: flex;
@@ -137,12 +146,19 @@ body {
     color: #e8619c !important;
 }
 
-/* 搜索按钮：薄荷绿渐变胶囊 */
-.front-header .el-button--success {
-    background: linear-gradient(135deg, #6ee7b7, #34d399) !important;
+/* 搜索按钮：深一号薄荷绿渐变胶囊，保证白字在常态与悬停态都可读 */
+.front-header .el-button--success,
+.front-header .el-button--success:hover {
+    background: linear-gradient(135deg, #2fcb95, #0ea678) !important;
     border: none !important;
     color: #ffffff !important;
     border-radius: 999px !important;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(14, 166, 120, 0.4);
+}
+.front-header .el-button--success:hover {
+    background: linear-gradient(135deg, #3fd8a4, #12b981) !important;
+    transform: translateY(-1px);
 }
 /* 搜索输入框：圆角半透明 */
 .front-header .el-input__inner {

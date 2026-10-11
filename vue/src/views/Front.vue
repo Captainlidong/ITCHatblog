@@ -24,7 +24,7 @@
       </div>
 
       <!--搜索框-->
-      <div>
+      <div class="front-header-search">
         <el-input placeholder="请输入关键字搜索" style="width: 260px; margin-right: 10px" v-model="title" class="input-with-select" clearable></el-input>
         <el-button type="success" icon="el-icon-search" @click="goSearch">搜 索</el-button>
       </div>
