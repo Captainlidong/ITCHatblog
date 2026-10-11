@@ -107,8 +107,17 @@
             <if test="userName != null">and user.name like concat('%',#{userName},'%')</if>
             <if test="userId != null">and user.id =#{userId} </if>
         </where>
-        <!-- 排序：置顶的博客始终排在最前；sort 由前端切换 最新date/最热reads/点赞最多likes -->
+        <!-- 排序：置顶的博客始终排在最前；sort 由前端切换 综合composite/最新date/最热reads/点赞最多likes
+             综合分 = 阅读量 + 点赞×5 + 收藏×10 + 评论×3 -->
         <choose>
+            <when test="sort == 'composite'">
+                order by blog.top desc,
+                ( blog.read_count
+                + (select count(*) from likes where likes.fid = blog.id and likes.module = '博客') * 5
+                + (select count(*) from collect where collect.fid = blog.id and collect.module = '博客') * 10
+                + (select count(*) from `comment` where `comment`.fid = blog.id and `comment`.module = '博客') * 3
+                ) desc, blog.date desc
+            </when>
             <when test="sort == 'reads'">
                 order by blog.top desc, blog.read_count desc, blog.date desc
             </when>

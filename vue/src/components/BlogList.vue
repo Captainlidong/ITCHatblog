@@ -4,6 +4,7 @@
     <!-- 排序切换（首页/搜索列表） -->
     <div v-if="!type && total > 0" class="sort-bar">
       <span class="sort-label">排序：</span>
+      <span class="sort-btn" :class="{active: sort==='composite'}" @click="changeSort('composite')">综合</span>
       <span class="sort-btn" :class="{active: sort==='date'}" @click="changeSort('date')">最新</span>
       <span class="sort-btn" :class="{active: sort==='reads'}" @click="changeSort('reads')">最热</span>
       <span class="sort-btn" :class="{active: sort==='likes'}" @click="changeSort('likes')">点赞最多</span>
@@ -88,7 +89,7 @@ export default {
       pageNum: 1,   // 当前的页码
       pageSize: 10,  // 每页显示的个数
       total: 0,     // 总记录数
-      sort: 'date', // 排序方式：date最新 reads最热 likes点赞最多
+      sort: 'composite', // 排序方式：composite综合 date最新 reads最热 likes点赞最多
     }
   },
   watch: {  // 监听数据变化  加载最新数据
