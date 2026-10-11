@@ -1,6 +1,6 @@
 <template>
   <div class="main-content" style="max-width: 1000px">
-  <div class="card" style="min-height: 80vh">
+  <div class="card" style="min-height: 80vh;display: flex;flex-direction: column">
 
     <div v-if="loading" style="text-align: center; padding: 30px;">
       <el-spinner></el-spinner>
@@ -51,8 +51,8 @@
       暂无推荐内容。
     </div>
 
-    <!-- 分页 -->
-    <div v-if="total > 0" style="margin-top: 10px">
+    <!-- 分页（列表较短时固定在卡片底部左侧） -->
+    <div v-if="total > 0" style="margin-top: auto;padding-top: 10px">
       <el-pagination
           background
           @current-change="handleCurrentChange"
