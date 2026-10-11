@@ -230,12 +230,16 @@ body {
 
 /* ---------- 分类侧边栏：胶囊按钮 ---------- */
 .main-body .category-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 6px 14px;
     padding: 9px 0;
     border-radius: 999px;
     background: rgba(243, 232, 255, 0.8);
     color: #6b5b95;
     font-size: 14px;
+    line-height: 1.2;
     transition: all .25s;
 }
 .main-body .category-item:hover {
