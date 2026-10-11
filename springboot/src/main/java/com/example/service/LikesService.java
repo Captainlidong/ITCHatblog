@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.common.enums.LikesModuleEnum;
 import com.example.entity.Account;
 import com.example.entity.Likes;
 import com.example.mapper.LikesMapper;
@@ -18,6 +19,9 @@ public class LikesService {
     @Resource
     LikesMapper likesMapper;
 
+    @Resource
+    UserBehaviorService userBehaviorService;
+
     /**
      * 点赞或取消点赞
      * @param likes
@@ -28,8 +32,16 @@ public class LikesService {
         Likes dblikes= likesMapper.selectUserLikes(likes);
         if (dblikes==null){
             likesMapper.insert(likes);
+            // 点赞博客时记录用户行为（用于协同过滤推荐）
+            if (LikesModuleEnum.BLOG.getValue().equals(likes.getModule())) {
+                userBehaviorService.record(likes.getFid(), UserBehaviorService.TYPE_LIKE);
+            }
         }else {
             likesMapper.deleteById(dblikes.getId());
+            // 取消点赞时移除对应行为记录
+            if (LikesModuleEnum.BLOG.getValue().equals(likes.getModule())) {
+                userBehaviorService.remove(likes.getFid(), UserBehaviorService.TYPE_LIKE);
+            }
         }
 
     }

@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.common.Result;
 import com.example.entity.Blog;
 import com.example.service.BlogService;
+import com.example.service.UserBehaviorService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,9 @@ import java.util.Set;
 public class BlogController {
     @Resource
     private BlogService blogService;
+
+    @Resource
+    private UserBehaviorService userBehaviorService;
 
     /**
      * 新增
@@ -58,13 +62,14 @@ public class BlogController {
     }
 
     /**
-     * 博客阅读量+1
+     * 博客阅读量+1，同时记录当前用户的浏览行为（用于协同过滤推荐）
      * @param blogId
      * @return
      */
     @PutMapping("/updateReadCount/{blogId}")
     public Result updateReadCount(@PathVariable Integer blogId){
         blogService.updateReadCount(blogId);
+        userBehaviorService.record(blogId, UserBehaviorService.TYPE_VIEW);
         return Result.success();
     }
     /**

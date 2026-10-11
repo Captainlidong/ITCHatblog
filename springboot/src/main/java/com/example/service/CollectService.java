@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.common.enums.LikesModuleEnum;
 import com.example.entity.Account;
 import com.example.entity.Collect;
 import com.example.mapper.CollectMapper;
@@ -19,14 +20,25 @@ public class CollectService {
     @Resource
     CollectMapper collectMapper;
 
+    @Resource
+    UserBehaviorService userBehaviorService;
+
     public void set(Collect collect) {
         Account currentUser = TokenUtils.getCurrentUser();
         collect.setUserId(currentUser.getId());
         Collect dbCollect = collectMapper.selectUserCollect(collect);
         if (dbCollect==null){
             collectMapper.insert(collect);
+            // 收藏博客时记录用户行为（用于协同过滤推荐）
+            if (LikesModuleEnum.BLOG.getValue().equals(collect.getModule())) {
+                userBehaviorService.record(collect.getFid(), UserBehaviorService.TYPE_COLLECT);
+            }
         }else {
             collectMapper.deleteById(dbCollect.getId());
+            // 取消收藏时移除对应行为记录
+            if (LikesModuleEnum.BLOG.getValue().equals(collect.getModule())) {
+                userBehaviorService.remove(collect.getFid(), UserBehaviorService.TYPE_COLLECT);
+            }
         }
     }
 

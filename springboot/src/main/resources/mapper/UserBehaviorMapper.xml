@@ -12,7 +12,22 @@
     </select>
 
     <insert id="insert">
-        INSERT INTO user_behavior(user_id, blog_id, behavior_type, weight)
-        VALUES (#{userId}, #{blogId}, #{behaviorType}, #{weight})
+        INSERT INTO user_behavior(user_id, blog_id, behavior_type, weight, `timestamp`)
+        VALUES (#{userId}, #{blogId}, #{behaviorType}, #{weight}, now())
     </insert>
+
+    <select id="selectOne" resultType="com.example.entity.UserBehavior">
+        SELECT * FROM user_behavior
+        WHERE user_id = #{userId} AND blog_id = #{blogId} AND behavior_type = #{behaviorType}
+        LIMIT 1
+    </select>
+
+    <update id="updateTimestamp">
+        UPDATE user_behavior SET `timestamp` = now() WHERE id = #{id}
+    </update>
+
+    <delete id="deleteBehavior">
+        DELETE FROM user_behavior
+        WHERE user_id = #{userId} AND blog_id = #{blogId} AND behavior_type = #{behaviorType}
+    </delete>
 </mapper>

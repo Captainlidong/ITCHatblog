@@ -11,4 +11,14 @@ public interface UserBehaviorMapper {
     List<UserBehavior> getByUserId(@Param("userId") Integer userId);
 
     List<UserBehavior> getAllBehaviors();
+
+    UserBehavior selectOne(@Param("userId") Integer userId,
+                           @Param("blogId") Integer blogId,
+                           @Param("behaviorType") Byte behaviorType);
+
+    void updateTimestamp(@Param("id") Integer id);
+
+    void deleteBehavior(@Param("userId") Integer userId,
+                        @Param("blogId") Integer blogId,
+                        @Param("behaviorType") Byte behaviorType);
 }
