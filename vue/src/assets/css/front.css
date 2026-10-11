@@ -57,8 +57,8 @@ body{
     width: 80%;
     margin: 5px auto;
 }
-/* ElementUI 样式覆盖 */
-.el-menu.el-menu--horizontal {
+/* ElementUI 样式覆盖（限定在前台头部导航内，避免与后台 manager.css 的深色菜单样式互相污染） */
+.front-header .el-menu.el-menu--horizontal {
     border: none !important;
     height: 59px;
 }
@@ -74,18 +74,18 @@ body{
     display: block;
     white-space: nowrap;
 }
-.el-menu{
+.front-header .el-menu{
     background-color: #0066BC;
 }
-.el-menu-item.is-active{
+.front-header .el-menu-item.is-active{
     color: #ffffff !important;
     background-color: #1890ff !important;
     height: 59px !important;
 }
-.el-menu-item{
+.front-header .el-menu-item{
     color: #ffffff !important;
     border: none !important;
 }
-.el-menu-item:not(.is-active):hover{
+.front-header .el-menu-item:not(.is-active):hover{
     background-color: #59aeff !important;
 }

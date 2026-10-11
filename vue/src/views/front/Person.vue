@@ -1,6 +1,6 @@
 <template>
   <div class="main-content" style="width: 50%">
-    <el-tabs v-model="activeName" @tab-click="clickTabs">
+    <el-tabs v-if="!guest" v-model="activeName" @tab-click="clickTabs">
       <el-tab-pane label="我发表的博客" name="我发表的博客">
         <div class="card" style="padding: 5px"><el-button type="primary" @click="addBlog">发表新博客</el-button></div>
         <div style="margin-top: 10px">
@@ -48,6 +48,14 @@
       </el-tab-pane>
     </el-tabs>
 
+    <!-- 游客引导 -->
+    <div v-if="guest" class="card" style="text-align: center; padding: 90px 20px;">
+      <i class="el-icon-user-solid" style="font-size: 52px; color: #409EFF"></i>
+      <p style="font-size: 16px; color: #666666; margin: 18px 0 26px">登录后可管理你的博客、点赞、收藏和活动报名</p>
+      <el-button type="primary" @click="$router.push('/login')">去登录</el-button>
+      <el-button @click="$router.push('/register')">去注册</el-button>
+    </div>
+
   <Footer/>
   </div>
 </template>
@@ -94,14 +102,14 @@ export default {
       activeName:'我发表的博客',
       likeCurrent:'博客',
       collectCurrent:'博客',
-      commentCurrent:'博客'
+      commentCurrent:'博客',
+      guest: false
     }
   },
   created() {
     const user = JSON.parse(localStorage.getItem('xm-user') || '{}')
-    if (!user.id) {   // 游客不能进入个人中心
-      this.$message.warning('该操作需要登录，请先登录或注册')
-      this.$router.push('/login')
+    if (!user.id) {   // 游客：展示引导卡片而不是强制跳登录
+      this.guest = true
     }
   },
   methods: {

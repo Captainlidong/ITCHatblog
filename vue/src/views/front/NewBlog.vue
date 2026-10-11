@@ -1,6 +1,6 @@
 <template>
   <div style="width: 50%;margin: 5px auto">
-    <div class="card" style="margin-bottom: 100px">
+    <div class="card" style="margin-bottom: 100px" v-if="!guest">
       <div style="font-weight: bold;font-size: 24px;margin-bottom: 50px">发表新博客/编辑博客</div>
       <el-form :model="form" label-width="100px" style="padding-right: 50px" :rules="rules" ref="formRef">
         <el-form-item label="标题" prop="title">
@@ -43,6 +43,14 @@
       </el-form>
       <div style="text-align: center"><el-button type="primary" style="width: 100px" @click="save">发 表</el-button></div>
     </div>
+
+    <!-- 游客引导 -->
+    <div v-if="guest" class="card" style="text-align: center; padding: 90px 20px;">
+      <i class="el-icon-edit-outline" style="font-size: 52px; color: #409EFF"></i>
+      <p style="font-size: 16px; color: #666666; margin: 18px 0 26px">登录后就可以发表你的博客啦</p>
+      <el-button type="primary" @click="$router.push('/login')">去登录</el-button>
+      <el-button @click="$router.push('/register')">去注册</el-button>
+    </div>
   </div>
 </template>
 
@@ -61,12 +69,12 @@ export default {
       categoryList:[],
       editor:null,
       blogId:this.$route.query.blogId,
+      guest: false
     }
   },
   mounted() {
-    if (!this.user || !this.user.id) {   // 游客不能发表博客
-      this.$message.warning('该操作需要登录，请先登录或注册')
-      this.$router.push('/login')
+    if (!this.user || !this.user.id) {   // 游客：展示引导卡片而不是强制跳登录
+      this.guest = true
       return
     }
     this.$request.get('/category/selectAll').then(res=>{

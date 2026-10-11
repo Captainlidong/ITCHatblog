@@ -102,41 +102,42 @@
 }
 
 
-/* ElementUI */
-.el-menu {
+/* ElementUI（限定在后台布局容器内，避免泄漏到前台导航栏）
+   注意：.el-menu-item 的 #000b17 近黑色背景一旦泄漏到前台导航，就会出现"菜单变黑"的问题 */
+.manager-container .el-menu {
     width: 200px;
     height: 100%;
     background-color: #00162a;
 }
 
-.el-submenu__title {
+.manager-container .el-submenu__title {
     color: #ddd;
     background-color: #011223 !important;
     height: 50px;
     line-height: 50px;
 }
 
-.el-menu-item {
+.manager-container .el-menu-item {
     color: #fff;
     height: 50px;
     line-height: 50px;
     background-color: #000b17 !important; /* 必须加上这个背景色，否则鼠标离开会出现白色 */
 }
 
-.el-menu-item i {
+.manager-container .el-menu-item i {
     color: #fff !important;
 }
 
-.el-menu-item.is-active {
+.manager-container .el-menu-item.is-active {
     background-color: #1890ff !important;
     color: #fff;
 }
 
-.el-menu--inline .el-menu-item {
+.manager-container .el-menu--inline .el-menu-item {
     padding-left: 50px !important;
 }
 
-.el-menu .is-active {
+.manager-container .el-menu .is-active {
     color: #fff !important;
 }
 
@@ -149,12 +150,12 @@
     /*color: #fff;*/
 }
 
-.el-menu-item:hover {
+.manager-container .el-menu-item:hover {
     color: #fff !important;
     background-color: #46a6ff !important;
 }
 
-.el-submenu__icon-arrow {
+.manager-container .el-submenu__icon-arrow {
     color: #ddd !important;
     margin-top: -5px;
 }
