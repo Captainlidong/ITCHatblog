@@ -30,3 +30,4 @@ Thumbs.db
 # 演示数据生成产物（可由 scripts/seed 重新生成）
 scripts/seed/xm-blog-seed.sql
 scripts/seed/gen.log
+scripts/seed/__pycache__/
