@@ -107,8 +107,24 @@
             <if test="userName != null">and user.name like concat('%',#{userName},'%')</if>
             <if test="userId != null">and user.id =#{userId} </if>
         </where>
-        order by date desc
+        <!-- 排序：置顶的博客始终排在最前；sort 由前端切换 最新date/最热reads/点赞最多likes -->
+        <choose>
+            <when test="sort == 'reads'">
+                order by blog.top desc, blog.read_count desc, blog.date desc
+            </when>
+            <when test="sort == 'likes'">
+                order by blog.top desc, (select count(*) from likes where likes.fid = blog.id and likes.module = '博客') desc, blog.date desc
+            </when>
+            <otherwise>
+                order by blog.top desc, blog.date desc
+            </otherwise>
+        </choose>
     </select>
+
+    <!--置顶/取消置顶-->
+    <update id="setTop">
+        update blog set top = #{top} where id = #{id}
+    </update>
 
     <!--分页查询 用户点赞的博客-->
     <select id="selectUserLike" resultType="com.example.entity.Blog">

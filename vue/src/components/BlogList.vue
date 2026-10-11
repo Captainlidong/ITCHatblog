@@ -1,12 +1,21 @@
 <template>
   <div class="card" style="min-height: 80vh">
 
+    <!-- 排序切换（首页/搜索列表） -->
+    <div v-if="!type && total > 0" class="sort-bar">
+      <span class="sort-label">排序：</span>
+      <span class="sort-btn" :class="{active: sort==='date'}" @click="changeSort('date')">最新</span>
+      <span class="sort-btn" :class="{active: sort==='reads'}" @click="changeSort('reads')">最热</span>
+      <span class="sort-btn" :class="{active: sort==='likes'}" @click="changeSort('likes')">点赞最多</span>
+    </div>
+
     <div class="blog-box" v-for="item in tableData" :key="item.id" v-if="total>0">
 
       <div style="flex: 1;width: 0">
         <!--标题-->
         <a :href="'/front/blogDetail?blogId='+item.id" target="_blank">
           <div class="line1 blog-title">
+            <el-tag v-if="item.top === 1" type="danger" size="mini" style="margin-right: 6px">置顶</el-tag>
             {{ item.title }}
           </div>
         </a>
@@ -79,6 +88,7 @@ export default {
       pageNum: 1,   // 当前的页码
       pageSize: 10,  // 每页显示的个数
       total: 0,     // 总记录数
+      sort: 'date', // 排序方式：date最新 reads最热 likes点赞最多
     }
   },
   watch: {  // 监听数据变化  加载最新数据
@@ -90,6 +100,11 @@ export default {
     this.loadBlogs(1)
   },
   methods: {
+    changeSort(sort) {   // 切换排序方式
+      if (this.sort === sort) return
+      this.sort = sort
+      this.loadBlogs(1)
+    },
     editBlog(blogId){
       window.open('/front/newBlog?blogId='+blogId)
     },
@@ -123,7 +138,8 @@ export default {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           categoryName: this.categoryName === '全部博客' ? null : this.categoryName,
-          title:this.$route.query.title
+          title:this.$route.query.title,
+          sort: this.type ? null : this.sort
         }
       }).then(res => {
         this.tableData = res.data?.list
@@ -160,5 +176,35 @@ export default {
 
 .blog-title:hover {
   color: #2a60c9;
+}
+
+/* 排序切换 */
+.sort-bar {
+  display: flex;
+  align-items: center;
+  padding: 5px 5px 12px;
+  border-bottom: 1px solid #dddddd;
+}
+.sort-label {
+  font-size: 13px;
+  color: #909399;
+  margin-right: 8px;
+}
+.sort-btn {
+  padding: 4px 14px;
+  margin-right: 8px;
+  font-size: 13px;
+  color: #666666;
+  background: #f4f4f5;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.sort-btn:hover {
+  color: #1890ff;
+}
+.sort-btn.active {
+  color: #ffffff;
+  background-color: #1890ff;
 }
 </style>

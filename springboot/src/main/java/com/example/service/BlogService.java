@@ -147,6 +147,15 @@ public class BlogService {
     }
 
     /**
+     * 置顶/取消置顶（仅管理员可调用，调用方需校验角色）
+     * @param id   博客ID
+     * @param top  1置顶 0取消
+     */
+    public void setTop(Integer id, Integer top) {
+        blogMapper.setTop(id, top);
+    }
+
+    /**
      * 博客榜单
      * @return
      */

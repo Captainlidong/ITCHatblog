@@ -44,6 +44,28 @@ public class Blog {
 
     private Boolean userCollect;  //返回当前浏览的数据是否被当前登录的用户收藏
 
+    /** 是否置顶 0否 1是（仅管理员可设置） */
+    private Integer top;
+
+    /** 列表排序方式：date-最新（默认） reads-最热 likes-点赞最多，仅作为查询参数不落库 */
+    private String sort;
+
+    public Integer getTop() {
+        return top;
+    }
+
+    public void setTop(Integer top) {
+        this.top = top;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
+    public void setSort(String sort) {
+        this.sort = sort;
+    }
+
     public Integer getCollectCount() {
         return collectCount;
     }

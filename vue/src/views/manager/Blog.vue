@@ -43,9 +43,10 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" align="center" width="180">
+        <el-table-column label="操作" align="center" width="250">
           <template v-slot="scope">
             <el-button size="mini" type="primary" plain @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button size="mini" type="warning" plain @click="setTop(scope.row)">{{ scope.row.top === 1 ? '取消置顶' : '置顶' }}</el-button>
             <el-button size="mini" type="danger" plain @click="del(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -205,6 +206,17 @@ export default {
           }
         })
       }).catch(() => {
+      })
+    },
+    setTop(row) {   // 置顶/取消置顶
+      const toTop = row.top !== 1
+      this.$request.put('/blog/setTop/' + row.id + '/' + (toTop ? 1 : 0)).then(res => {
+        if (res.code === '200') {
+          this.$message.success(toTop ? '置顶成功' : '已取消置顶')
+          this.load()
+        } else {
+          this.$message.error(res.msg)
+        }
       })
     },
     handleSelectionChange(rows) {   // 当前选中的所有的行数据

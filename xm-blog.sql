@@ -79,6 +79,7 @@ CREATE TABLE `blog`  (
   `date` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '发布日期',
   `read_count` int(0) NULL DEFAULT 0 COMMENT '浏览量',
   `category_id` int(0) NULL DEFAULT NULL COMMENT '分类ID',
+  `top` int(0) NULL DEFAULT 0 COMMENT '是否置顶 0否 1是',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '博客信息' ROW_FORMAT = Dynamic;
 

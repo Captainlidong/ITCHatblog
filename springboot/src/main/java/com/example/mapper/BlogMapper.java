@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 import com.example.entity.Blog;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
@@ -45,6 +46,13 @@ public interface BlogMapper {
      */
     @Select("SELECT * FROM blog WHERE user_id = #{userId}")
     List<Blog> selectUserBlog(Integer userId);
+
+    /**
+     * 置顶/取消置顶
+     * @param id   博客ID
+     * @param top  1置顶 0取消
+     */
+    void setTop(@Param("id") Integer id, @Param("top") Integer top);
 
     /**
      * 更新阅读数

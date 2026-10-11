@@ -1,9 +1,12 @@
 package com.example.controller;
 
 import com.example.common.Result;
+import com.example.common.enums.RoleEnum;
+import com.example.entity.Account;
 import com.example.entity.Blog;
 import com.example.service.BlogService;
 import com.example.service.UserBehaviorService;
+import com.example.utils.TokenUtils;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,6 +73,25 @@ public class BlogController {
     public Result updateReadCount(@PathVariable Integer blogId){
         blogService.updateReadCount(blogId);
         userBehaviorService.record(blogId, UserBehaviorService.TYPE_VIEW);
+        return Result.success();
+    }
+
+    /**
+     * 置顶/取消置顶（仅管理员）
+     * @param id    博客ID
+     * @param state 1置顶 0取消置顶
+     * @return
+     */
+    @PutMapping("/setTop/{id}/{state}")
+    public Result setTop(@PathVariable Integer id, @PathVariable Integer state){
+        Account currentUser = TokenUtils.getCurrentUser();
+        if (!RoleEnum.ADMIN.name().equals(currentUser.getRole())) {
+            return Result.error("403", "仅管理员可以置顶博客");
+        }
+        if (state == null || (state != 0 && state != 1)) {
+            return Result.error("400", "参数错误");
+        }
+        blogService.setTop(id, state);
         return Result.success();
     }
     /**
