@@ -1,4 +1,5 @@
 <template>
+  <div class="main-content" style="max-width: 1000px">
   <div class="card" style="min-height: 80vh">
 
     <div v-if="loading" style="text-align: center; padding: 30px;">
@@ -62,6 +63,7 @@
       </el-pagination>
     </div>
 
+    </div>
   </div>
 </template>
 
