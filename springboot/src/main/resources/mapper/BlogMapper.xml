@@ -135,7 +135,8 @@
         update blog set top = #{top} where id = #{id}
     </update>
 
-    <!--热榜：按综合热度分（阅读量 + 点赞×5 + 收藏×10 + 评论×3）取前20，与首页综合排序同口径-->
+    <!--热榜：按综合热度分（阅读量 + 点赞×5 + 收藏×10 + 评论×3）做时间衰减后取前20，与首页综合排序同口径
+        衰减公式：综合分 ÷ (发布距今天数 + 2)，越新的文章加成越高，经典老文仍可凭高互动留在榜上-->
     <select id="selectHot" resultType="com.example.entity.Blog">
         select blog.* ,
         category.name as categoryName,
@@ -149,7 +150,7 @@
         + (select count(*) from likes where likes.fid = blog.id and likes.module = '博客') * 5
         + (select count(*) from collect where collect.fid = blog.id and collect.module = '博客') * 10
         + (select count(*) from `comment` where `comment`.fid = blog.id and `comment`.module = '博客') * 3
-        ) desc
+        ) / GREATEST(DATEDIFF(NOW(), STR_TO_DATE(blog.date, '%Y-%m-%d')) + 2, 1) desc
         limit 20
     </select>
 
