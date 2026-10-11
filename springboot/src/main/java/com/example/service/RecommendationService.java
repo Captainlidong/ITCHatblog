@@ -76,9 +76,14 @@ public class RecommendationService {
                 .limit(RECOMMEND_LIMIT)
                 .collect(Collectors.toList());
 
-        // 4. 有行为但算不出候选时同样热门兜底
+        // 4. 有行为但算不出候选时热门兜底（排除已交互）
         if (recommended.isEmpty()) {
-            return topHotBlogs(allBlogs, userId, targetVector.keySet());
+            recommended = topHotBlogs(allBlogs, userId, targetVector.keySet());
+        }
+        // 5. 最后兜底：把别人写的博客都交互过的重度用户，第二级也会为空，
+        //    此时只排除自己写的热门博客，保证推荐页不出现空列表
+        if (recommended.isEmpty()) {
+            recommended = topHotBlogs(allBlogs, userId, Collections.emptySet());
         }
         return recommended;
     }
