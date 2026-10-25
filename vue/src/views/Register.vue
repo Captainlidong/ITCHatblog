@@ -12,6 +12,14 @@
         <el-form-item prop="confirmPass">
           <el-input prefix-icon="el-icon-lock" size="medium"  placeholder="请确认密码" show-password  v-model="form.confirmPass"></el-input>
         </el-form-item>
+        <!--验证码（服务端生成+校验）-->
+        <el-form-item prop="code">
+          <div style="display: flex">
+            <el-input style="flex: 1" size="medium" v-model="code" placeholder="请输入验证码"></el-input>
+            <img v-if="captchaImg" :src="captchaImg" @click="loadCaptcha" title="点击刷新验证码"
+                 style="height: 36px; margin-left: 8px; border-radius: 6px; cursor: pointer; border: 1px solid #e9d5ff">
+          </div>
+        </el-form-item>
         <el-form-item>
           <el-button style="width: 100%; background-color: #2a60c9; border-color: #2a60c9; color: white" size="medium"  @click="register">注 册</el-button>
         </el-form-item>
@@ -42,6 +50,9 @@ export default {
     }
     return {
       form: {role:'USER'},
+      code: '',   // 表单绑定的验证码
+      captchaId: '',   // 服务端签发的验证码ID
+      captchaImg: '',  // 服务端生成的验证码图片（base64）
       rules: {
         username: [
           { required: true, message: '请输入账号', trigger: 'blur' },
@@ -56,19 +67,34 @@ export default {
     }
   },
   created() {
-
+    this.loadCaptcha()
   },
   methods: {
+    // 从服务端获取新验证码
+    loadCaptcha() {
+      this.$request.get('/captcha/generate').then(res => {
+        if (res.code === '200') {
+          this.captchaId = res.data.captchaId
+          this.captchaImg = res.data.captchaImage
+        }
+      })
+    },
     register() {
+      if (!this.code){
+        this.$message.warning('请输入验证码！')
+        this.loadCaptcha()
+        return
+      }
       this.$refs['formRef'].validate((valid) => {
         if (valid) {
           // 验证通过
-          this.$request.post('/register', this.form).then(res => {
+          this.$request.post('/register', { ...this.form, captchaId: this.captchaId, captchaCode: this.code }).then(res => {
             if (res.code === '200') {
               this.$router.push('/')  // 跳转登录页面
               this.$message.success('注册成功')
             } else {
               this.$message.error(res.msg)
+              this.loadCaptcha()
             }
           })
         }

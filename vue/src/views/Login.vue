@@ -18,11 +18,12 @@
           </el-radio-group>
         </el-form-item>
 
-         <!--验证码-->
+         <!--验证码（服务端生成+校验）-->
         <el-form-item prop="code">
           <div style="display: flex">
-            <el-input style="flex: 1" size="medium" v-model="code"></el-input>
-            <Identify :identifyCode="identifyCode" @click.native="refreshCode" />
+            <el-input style="flex: 1" size="medium" v-model="code" placeholder="请输入验证码"></el-input>
+            <img v-if="captchaImg" :src="captchaImg" @click="loadCaptcha" title="点击刷新验证码"
+                 style="height: 36px; margin-left: 8px; border-radius: 6px; cursor: pointer; border: 1px solid #e9d5ff">
           </div>
         </el-form-item>
 
@@ -41,13 +42,8 @@
 </template>
 
 <script>
-import Identify from "@/components/Identify.vue";
-
 export default {
   name: "Login",
-  components:{
-    Identify
-  },
   data() {
     return {
       form: { role: 'ADMIN' },
@@ -60,42 +56,33 @@ export default {
         ]
       },
       code: '',   // 表单绑定的验证码
-      // 图片验证码
-      identifyCode: '',
-      // 验证码规则
-      identifyCodes: '123456789ABCDEFGHGKMNPQRSTUVWXY',
+      captchaId: '',   // 服务端签发的验证码ID
+      captchaImg: '',  // 服务端生成的验证码图片（base64）
     }
   },
   mounted() {
-    this.refreshCode()
+    this.loadCaptcha()
   },
   methods: {
-    // 切换验证码
-    refreshCode() {
-      this.identifyCode = ''
-      this.makeCode(this.identifyCodes, 4)
-    },
-    // 生成随机验证码
-    makeCode(o, l) {
-      for (let i = 0; i < l; i++) {
-        this.identifyCode += this.identifyCodes[Math.floor(Math.random() * (this.identifyCodes.length))]
-      }
+    // 从服务端获取新验证码
+    loadCaptcha() {
+      this.$request.get('/captcha/generate').then(res => {
+        if (res.code === '200') {
+          this.captchaId = res.data.captchaId
+          this.captchaImg = res.data.captchaImage
+        }
+      })
     },
     login() {
       if (!this.code){
         this.$message.warning('请输入验证码！')
-        this.refreshCode()
-        return
-      }
-      if (this.code.toLowerCase()!==this.identifyCode.toLowerCase()){
-        this.$message.warning('输入验证码错误！请重新输入！')
-        this.refreshCode()
+        this.loadCaptcha()
         return
       }
       this.$refs['formRef'].validate((valid) => {
         if (valid) {
           // 验证通过
-          this.$request.post('/login', this.form).then(res => {
+          this.$request.post('/login', { ...this.form, captchaId: this.captchaId, captchaCode: this.code }).then(res => {
             if (res.code === '200') {
               localStorage.setItem("xm-user", JSON.stringify(res.data))  // 存储用户数据
 
@@ -110,7 +97,7 @@ export default {
 
             } else {
               /*密码错了，验证码要刷新*/
-              this.refreshCode()
+              this.loadCaptcha()
               this.$message.error(res.msg)
             }
           })

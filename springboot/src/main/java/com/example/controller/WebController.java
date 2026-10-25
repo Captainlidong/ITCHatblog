@@ -76,6 +76,9 @@ public class WebController {
                 || ObjectUtil.isEmpty(account.getRole())) {
             return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
         }
+        if (!CaptchaController.verify(account.getCaptchaId(), account.getCaptchaCode())) {
+            return Result.error("400", "验证码错误或已过期");
+        }
         if (RoleEnum.ADMIN.name().equals(account.getRole())) {
             account = adminService.login(account);
         }else if (RoleEnum.USER.name().equals(account.getRole())) {
@@ -94,6 +97,9 @@ public class WebController {
         if (StrUtil.isBlank(account.getUsername()) || StrUtil.isBlank(account.getPassword())
                 || ObjectUtil.isEmpty(account.getRole())) {
             return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
+        }
+        if (!CaptchaController.verify(account.getCaptchaId(), account.getCaptchaCode())) {
+            return Result.error("400", "验证码错误或已过期");
         }
         if (RoleEnum.USER.name().equals(account.getRole())) {
             userService.register(account);
