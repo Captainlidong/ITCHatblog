@@ -7,7 +7,9 @@ import com.example.common.Result;
 import com.example.common.enums.ResultCodeEnum;
 import com.example.common.enums.RoleEnum;
 import com.example.entity.Account;
+import com.example.exception.CustomException;
 import com.example.service.AdminService;
+import com.example.service.RateLimitService;
 import com.example.service.UserService;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,9 @@ public class WebController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private RateLimitService rateLimitService;
 
     /**
      * 前端打包产物嵌入后端（classpath:/static/index.html 存在）时，根路径转发到前端首页；纯后端模式保持原样返回 JSON
@@ -68,10 +73,14 @@ public class WebController {
     }
 
     /**
-     * 登录
+     * 登录（服务端验证码 + 同IP失败次数限制）
      */
     @PostMapping("/login")
-    public Result login(@RequestBody Account account) {
+    public Result login(@RequestBody Account account, HttpServletRequest request) {
+        String ip = RateLimitService.clientIp(request);
+        if (rateLimitService.isLoginBlocked(ip)) {
+            return Result.error("429", "登录失败次数过多，请15分钟后再试");
+        }
         if (ObjectUtil.isEmpty(account.getUsername()) || ObjectUtil.isEmpty(account.getPassword())
                 || ObjectUtil.isEmpty(account.getRole())) {
             return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
@@ -79,21 +88,33 @@ public class WebController {
         if (!CaptchaController.verify(account.getCaptchaId(), account.getCaptchaCode())) {
             return Result.error("400", "验证码错误或已过期");
         }
-        if (RoleEnum.ADMIN.name().equals(account.getRole())) {
-            account = adminService.login(account);
-        }else if (RoleEnum.USER.name().equals(account.getRole())) {
-            account =userService.login(account);
-        }else {
-            return Result.error(ResultCodeEnum.PARAM_ERROR);
+        try {
+            if (RoleEnum.ADMIN.name().equals(account.getRole())) {
+                account = adminService.login(account);
+            }else if (RoleEnum.USER.name().equals(account.getRole())) {
+                account =userService.login(account);
+            }else {
+                return Result.error(ResultCodeEnum.PARAM_ERROR);
+            }
+        } catch (CustomException e) {
+            // 账号或密码错误才计入失败次数（验证码错误不计）
+            rateLimitService.recordLoginFailure(ip);
+            throw e;
         }
+        rateLimitService.resetLoginFailures(ip);
         return Result.success(account);
     }
 
     /**
-     * 用户注册
+     * 用户注册（服务端验证码 + 同IP频率限制）
      */
     @PostMapping("/register")
-    public Result register(@RequestBody Account account) {
+    public Result register(@RequestBody Account account, HttpServletRequest request) {
+        String ip = RateLimitService.clientIp(request);
+        String deny = rateLimitService.checkRegister(ip);
+        if (deny != null) {
+            return Result.error("429", deny);
+        }
         if (StrUtil.isBlank(account.getUsername()) || StrUtil.isBlank(account.getPassword())
                 || ObjectUtil.isEmpty(account.getRole())) {
             return Result.error(ResultCodeEnum.PARAM_LOST_ERROR);
